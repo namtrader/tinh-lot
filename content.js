@@ -3,18 +3,18 @@
 
     // Tạo và thêm HTML vào TradingView
     const containerHTML = `
-        <div id="lotCalculator" class="lot-calculator">
+        <div id="hn-lotCalculator" class="hn-lot-calculator">
             <h1 style="display: flex; justify-content: space-between; align-items: center;">
                 <span>Công Cụ Tính Lot</span>
-                <span id="closeButton" style="cursor: pointer; color: red; padding: 5px 10px;" title="Đóng">X</span>
+                <span id="hn-closeButton" style="cursor: pointer; color: red; padding: 5px 10px;" title="Đóng">X</span>
             </h1>
-            <form id="lotForm">
-                <div class="form-group">
-                    <div class="form-label">
+            <form id="hn-lotForm">
+                <div class="hn-form-group">
+                    <div class="hn-form-label">
                         <label for="currencyPair">Cặp Tiền:</label>
                     </div>
-                    <div class="form-input">
-                        <select id="currencyPair">
+                    <div class="hn-form-input">
+                        <select id="hn-currencyPair">
                             <option value="USD">xxxUSD,US30</option>
                             <option value="XAU">XAUUSD</option>
                             <option value="BTC">BTCUSD</option>
@@ -28,57 +28,57 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="form-label">
+                <div class="hn-form-group">
+                    <div class="hn-form-label">
                         <label for="capital">Vốn (USD):</label>
                     </div>
-                    <div class="form-input">
-                        <input type="number" id="capital" step="0.01" required>
+                    <div class="hn-form-input">
+                        <input type="number" id="hn-capital" step="0.01" required>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="form-label">
+                <div class="hn-form-group">
+                    <div class="hn-form-label">
                         <label for="riskPercentage">Rủi Ro (%):</label>
                     </div>
-                    <div class="form-input">
-                        <input type="number" id="riskPercentage" step="0.01" required>
+                    <div class="hn-form-input">
+                        <input type="number" id="hn-riskPercentage" step="0.01" required>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="form-label">
+                <div class="hn-form-group">
+                    <div class="hn-form-label">
                         <label for="entryPrice">
-                            <button type="button" id="copyEntryPrice" title="Sao chép giá Entry">Giá Entry:</button>
+                            <button type="button" id="hn-copyEntryPrice" title="Sao chép giá Entry">Giá Entry:</button>
                         </label>
                     </div>
-                    <div class="form-input">
-                        <input type="number" id="entryPrice" step="0.0001" required>
+                    <div class="hn-form-input">
+                        <input type="number" id="hn-entryPrice" step="0.0001" required>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="form-label">
+                <div class="hn-form-group">
+                    <div class="hn-form-label">
                         <label for="profitPrice">
-                            <button type="button" id="copyProfitPrice" title="Sao chép giá TP">Giá TP:</button>
+                            <button type="button" id="hn-copyProfitPrice" title="Sao chép giá TP">Giá TP:</button>
                         </label>
                     </div>
-                    <div class="form-input">
-                        <input type="number" id="profitPrice" step="0.0001" required>
+                    <div class="hn-form-input">
+                        <input type="number" id="hn-profitPrice" step="0.0001" required>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="form-label">
+                <div class="hn-form-group">
+                    <div class="hn-form-label">
                         <label for="stopLossPrice">
-                            <button type="button" id="copyStopLossPrice" title="Sao chép giá SL">Giá SL:</button>
+                            <button type="button" id="hn-copyStopLossPrice" title="Sao chép giá SL">Giá SL:</button>
                         </label>
                     </div>
-                    <div class="form-input">
-                        <input type="number" id="stopLossPrice" step="0.0001" required>
+                    <div class="hn-form-input">
+                        <input type="number" id="hn-stopLossPrice" step="0.0001" required>
                     </div>
                 </div>
-                <div class="exchange-rate-container">
-                    <span id="exchangeRate">0.00</span>
-                    <button type="button" id="reloadExchangeRate" title="Tải lại tỷ giá với USD">
+                <div class="hn-exchange-rate-container">
+                    <span id="hn-exchangeRate">0.00</span>
+                    <button type="button" id="hn-reloadExchangeRate" title="Tải lại tỷ giá với USD">
                         <!-- SVG Refresh Icon -->
-                        <svg fill="#FFFFFF" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 489.698 489.698" xml:space="preserve">
+                        <svg fill="#FFFFFF" height="24px" width="24px" version="1.1" id="hn-Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 489.698 489.698" xml:space="preserve">
                             <g>
                                 <g>
                                     <path d="M468.999,227.774c-11.4,0-20.8,8.3-20.8,19.8c-1,74.9-44.2,142.6-110.3,178.9c-99.6,54.7-216,5.6-260.6-61l62.9,13.1c10.4,2.1,21.8-4.2,23.9-15.6c2.1-10.4-4.2-21.8-15.6-23.9l-123.7-26c-7.2-1.7-26.1,3.5-23.9,22.9l15.6,124.8c1,10.4,9.4,17.7,19.8,17.7c15.5,0,21.8-11.4,20.8-22.9l-7.3-60.9c101.1,121.3,229.4,104.4,306.8,69.3c80.1-42.7,131.1-124.8,132.1-215.4C488.799,237.174,480.399,227.774,468.999,227.774z"/>
@@ -89,10 +89,10 @@
                     </button>
                 </div>
             </form>
-            <div class="alert" id="alert"></div>
-            <div class="result" id="result"></div>
-            <div class="footer">
-                <p><span class="heart">&#10084;</span> Kieptrader</p>
+            <div class="hn-alert" id="hn-alert"></div>
+            <div class="hn-result" id="hn-result"></div>
+            <div class="hn-footer">
+                <p><span class="hn-heart">&#10084;</span> Kieptrader</p>
             </div>
         </div>
     `;
@@ -103,7 +103,7 @@
     // Thêm CSS cho form
     const style = document.createElement('style');
     style.textContent = `
-        .lot-calculator {
+        .hn-lot-calculator {
             position: fixed;
             top: 10px;
             right: 10px;
@@ -118,50 +118,50 @@
             flex-direction: column;
             color: #fff;
         }
-        .footer {
+        .hn-footer {
             margin-top: auto;
             text-align: right;
-            font-size: 12px; /* Thay đổi kích thước chữ nếu cần */
-            color: #aaa; /* Màu chữ */
+            font-size: 12px;
+            color: #aaa;
         }
 
-        .heart {
-            color: #ff0000; /* Màu trái tim */
-            font-size: 14px; /* Kích thước trái tim */
+        .hn-heart {
+            color: #ff0000;
+            font-size: 14px;
         }
-        .lot-calculator h1 {
+        .hn-lot-calculator h1 {
             font-size: 18px;
             margin-top: 0;
             margin-bottom: 10px;
         }
-        .form-group {
+        .hn-form-group {
             display: flex;
             margin-bottom: 10px;
         }
-        .form-label {
+        .hn-form-label {
             flex: 1;
             padding-right: 10px;
         }
-        .form-input {
+        .hn-form-input {
             flex: 2;
         }
-        .form-input input, .form-input select {
+        .hn-form-input input, .hn-form-input select {
             width: 100%;
             padding: 5px;
             box-sizing: border-box;
             background-color: #808080;
         }
-        .alert, .result {
+        .hn-alert, .hn-result {
             margin-top: 10px;
         }
-        .result p {
+        .hn-result p {
             padding-top: 3px;
             padding-bottom: 3px;
         }
-        .alert p {
+        .hn-alert p {
             color: #6495ed;
         }
-        #copyEntryPrice, #copyProfitPrice, #copyStopLossPrice, #reloadExchangeRate {
+        #hn-copyEntryPrice, #hn-copyProfitPrice, #hn-copyStopLossPrice, #hn-reloadExchangeRate {
             margin-top: 5px;
             padding: 5px 10px;
             background-color: #007bff;
@@ -170,41 +170,41 @@
             border-radius: 3px;
             cursor: pointer;
         }
-        #copyEntryPrice:hover, #copyProfitPrice:hover, #copyStopLossPrice:hover, #reloadExchangeRate:hover, .copy-all-btn:hover {
+        #hn-copyEntryPrice:hover, #hn-copyProfitPrice:hover, #hn-copyStopLossPrice:hover, #hn-reloadExchangeRate:hover, .hn-copy-all-btn:hover {
             background-color: #0056b3;
         }
-        .copy-all-btn {
+        .hn-copy-all-btn {
             padding: 6px;
             margin-right: 10px;
             border-radius: 6px;
             background-color: #007bff;
             color: white;
         }
-        .exchange-rate-container {
+        .hn-exchange-rate-container {
             display: flex;
             justify-content: flex-end;
             align-items: center;
             font-size: 13px;
         }
 
-        #exchangeRate {
+        #hn-exchangeRate {
             margin-right: 5px;
             font-size: 13px;
         }
 
-        #reloadExchangeRate {
+        #hn-reloadExchangeRate {
             background: none;
             border: none;
             cursor: pointer;
         }
 
-        #reloadExchangeRate svg {
+        #hn-reloadExchangeRate svg {
             fill: #ffffff;
             height: 13px;
             width: 13px;
         }
 
-        #reloadExchangeRate:hover svg {
+        #hn-reloadExchangeRate:hover svg {
             fill: #cccccc;
         }
     `;
@@ -239,9 +239,9 @@
     }
 
     function updateExchangeRateField(rates) {
-        const pair = document.getElementById('currencyPair').value;
+        const pair = document.getElementById('hn-currencyPair').value;
         const exchangeRate = rates[pair];
-        document.getElementById('exchangeRate').textContent = exchangeRate ? exchangeRate.toFixed(2) : '';
+        document.getElementById('hn-exchangeRate').textContent = exchangeRate ? exchangeRate.toFixed(2) : '';
     }
 
     async function reloadExchangeRate() {
@@ -265,14 +265,12 @@
         const halfLotSize = Math.max(lotSize / 2, minLotSize);
         // Đảm bảo lotSize không nhỏ hơn minLotSize
         lotSize = Math.max(lotSize, minLotSize);
-        // Làm tròn xuống đến 1 chữ số thập phân
-        const truncatedPipRisk = Math.floor(pipRisk * 10) / 10;
 
-        document.getElementById('result').innerHTML = `
+        document.getElementById('hn-result').innerHTML = `
             <h2>${title}</h2>
             <p>Lot: <span style="color:red">${lotSize.toFixed(2)}</span> (Chia đôi: <span style="color:red">${halfLotSize.toFixed(2)}</span>)</p>
             <p>Số USD SL: ${maxRiskUSD.toFixed(2)}</p>
-            <p>Số Pip SL: ${truncatedPipRisk}</p>
+            <p>Số Pip SL: ${pipRisk.toFixed(1)}</p>
         `;
         console.log('%c' + pipValueUSD, 'color: blue;'); // Debug
     }
@@ -282,15 +280,15 @@
         const exchangeRates = data.exchangeRates;
 
         if (!exchangeRates) {
-            document.getElementById('result').innerHTML = '<p>Lỗi khi lấy tỷ giá. Vui lòng thử lại sau.</p>';
+            document.getElementById('hn-result').innerHTML = '<p>Lỗi khi lấy tỷ giá. Vui lòng thử lại sau.</p>';
             return;
         }
 
-        const capital = parseFloat(document.getElementById('capital').value);
-        const riskPercentage = parseFloat(document.getElementById('riskPercentage').value);
-        const entryPrice = parseFloat(document.getElementById('entryPrice').value);
-        const stopLossPrice = parseFloat(document.getElementById('stopLossPrice').value);
-        const pair = document.getElementById('currencyPair').value;
+        const capital = parseFloat(document.getElementById('hn-capital').value);
+        const riskPercentage = parseFloat(document.getElementById('hn-riskPercentage').value);
+        const entryPrice = parseFloat(document.getElementById('hn-entryPrice').value);
+        const stopLossPrice = parseFloat(document.getElementById('hn-stopLossPrice').value);
+        const pair = document.getElementById('hn-currencyPair').value;
         const exchangeRate = exchangeRates[pair];
 
         localStorage.setItem(CACHE_KEY, JSON.stringify({
@@ -318,7 +316,7 @@
             displayResult('Bitcoin', pipRisk, 0, lotSize, maxRiskUSD);
         } else {
             if (!exchangeRate) {
-                document.getElementById('result').innerHTML = '<p>Tỷ giá không hợp lệ. Vui lòng kiểm tra lại.</p>';
+                document.getElementById('hn-result').innerHTML = '<p>Tỷ giá không hợp lệ. Vui lòng kiểm tra lại.</p>';
                 return;
             }
 
@@ -368,7 +366,7 @@
 
     function updateCurrencyPair() {
         const unit = getCurrencyUnit();
-        const currencySelect = document.getElementById('currencyPair');
+        const currencySelect = document.getElementById('hn-currencyPair');
 
         if (currencySelect) {
             const options = currencySelect.querySelectorAll('option');
@@ -394,10 +392,10 @@
         const stopLevelInput = document.querySelector('input[data-property-id="Risk/RewardlongStopLevelPrice"], input[data-property-id="Risk/RewardshortStopLevelPrice"]');
 
         // Kiểm tra điều kiện: phần tử đích tồn tại, không có nút copy-all-btn và có ít nhất một entryPriceInput
-        if (targetDiv && !targetDiv.querySelector('.copy-all-btn') && entryPriceInput) {
+        if (targetDiv && !targetDiv.querySelector('.hn-copy-all-btn') && entryPriceInput) {
             // Tạo nút copy-all-btn
             const copyAllBtn = document.createElement('button');
-            copyAllBtn.className = 'copy-all-btn';
+            copyAllBtn.className = 'hn-copy-all-btn';
             copyAllBtn.textContent = 'Tính Lot';
             targetDiv.insertBefore(copyAllBtn, targetDiv.firstChild);
 
@@ -405,15 +403,15 @@
             copyAllBtn.addEventListener('click', () => {
                 if (entryPriceInput && stopLevelInput) {
                     // Sao chép giá trị từ các trường nhập liệu
-                    document.getElementById('entryPrice').value = entryPriceInput.value;
-                    document.getElementById('profitPrice').value = profitPriceInput ? profitPriceInput.value : '';
-                    document.getElementById('stopLossPrice').value = stopLevelInput.value;
+                    document.getElementById('hn-entryPrice').value = entryPriceInput.value;
+                    document.getElementById('hn-profitPrice').value = profitPriceInput ? profitPriceInput.value : '';
+                    document.getElementById('hn-stopLossPrice').value = stopLevelInput.value;
 
                     // Cập nhật cặp tiền tệ và thông báo
                     updateCurrencyPair();
-                    document.getElementById('alert').innerHTML = ''; // Xoá kết quả sao chép giá
+                    document.getElementById('hn-alert').innerHTML = ''; // Xoá kết quả sao chép giá
                     // Hiện bảng tính
-                    const lotCalculator = document.getElementById('lotCalculator');
+                    const lotCalculator = document.getElementById('hn-lotCalculator');
                     if (lotCalculator.style.display === 'none') {
                       lotCalculator.style.display = 'block'; // Hiển thị lại
                     }
@@ -434,31 +432,31 @@
 
     function copyToClipboard(value) {
         navigator.clipboard.writeText(value).then(() => {
-            document.getElementById('alert').innerHTML = `<p>Đã sao chép: ${value}</p>`;
+            document.getElementById('hn-alert').innerHTML = `<p>Đã sao chép: ${value}</p>`;
         }).catch(err => {
-            document.getElementById('alert').innerHTML = '<p>Lỗi khi sao chép.</p>';
+            document.getElementById('hn-alert').innerHTML = '<p>Lỗi khi sao chép.</p>';
         });
     }
 
     // Gán sự kiện
-    document.getElementById('reloadExchangeRate').addEventListener('click', reloadExchangeRate);
-    document.getElementById('lotForm').addEventListener('input', calculateLot);
-    document.getElementById('currencyPair').addEventListener('change', updateExchangeRate);
-    document.getElementById('copyEntryPrice').addEventListener('click', () => {
-        const entryPrice = document.getElementById('entryPrice').value;
+    document.getElementById('hn-reloadExchangeRate').addEventListener('click', reloadExchangeRate);
+    document.getElementById('hn-lotForm').addEventListener('input', calculateLot);
+    document.getElementById('hn-currencyPair').addEventListener('change', updateExchangeRate);
+    document.getElementById('hn-copyEntryPrice').addEventListener('click', () => {
+        const entryPrice = document.getElementById('hn-entryPrice').value;
         copyToClipboard(entryPrice);
     });
-    document.getElementById('copyProfitPrice').addEventListener('click', () => {
-        const profitPrice = document.getElementById('profitPrice').value;
+    document.getElementById('hn-copyProfitPrice').addEventListener('click', () => {
+        const profitPrice = document.getElementById('hn-profitPrice').value;
         copyToClipboard(profitPrice);
     });
-    document.getElementById('copyStopLossPrice').addEventListener('click', () => {
-        const stopLossPrice = document.getElementById('stopLossPrice').value;
+    document.getElementById('hn-copyStopLossPrice').addEventListener('click', () => {
+        const stopLossPrice = document.getElementById('hn-stopLossPrice').value;
         copyToClipboard(stopLossPrice);
     });
     // Ẩn hiện bảng tính
-    document.getElementById('closeButton').addEventListener('click', function() {
-      const lotCalculator = document.getElementById('lotCalculator');
+    document.getElementById('hn-closeButton').addEventListener('click', function() {
+      const lotCalculator = document.getElementById('hn-lotCalculator');
       if (lotCalculator.style.display === 'none') {
           lotCalculator.style.display = 'block'; // Hiển thị lại
       } else {
@@ -467,7 +465,7 @@
     });
 
     function savePosition() {
-        const calculator = document.getElementById('lotCalculator');
+        const calculator = document.getElementById('hn-lotCalculator');
         if (calculator) {
             const position = {
                 left: calculator.style.left,
@@ -481,7 +479,7 @@
         const savedPosition = localStorage.getItem(STORAGE_KEY);
         if (savedPosition) {
             const position = JSON.parse(savedPosition);
-            const calculator = document.getElementById('lotCalculator');
+            const calculator = document.getElementById('hn-lotCalculator');
             if (calculator) {
                 calculator.style.left = position.left || '0px';
                 calculator.style.top = position.top || '0px';
@@ -507,10 +505,10 @@
         }
 
         if (data) {
-            document.getElementById('currencyPair').value = data.currencyPair || 'USD';
-            document.getElementById('capital').value = data.capital || '';
-            document.getElementById('riskPercentage').value = data.riskPercentage || '';
-            document.getElementById('exchangeRate').textContent = data.exchangeRates ? data.exchangeRates[data.currencyPair] || '' : '';
+            document.getElementById('hn-currencyPair').value = data.currencyPair || 'USD';
+            document.getElementById('hn-capital').value = data.capital || '';
+            document.getElementById('hn-riskPercentage').value = data.riskPercentage || '';
+            document.getElementById('hn-exchangeRate').textContent = data.exchangeRates ? data.exchangeRates[data.currencyPair] || '' : '';
         }
 
         loadPosition(); // Khôi phục vị trí khi khởi tạo
@@ -523,7 +521,7 @@
     });
 
     // Gán sự kiện kéo thả form
-    const draggable = document.getElementById('lotCalculator');
+    const draggable = document.getElementById('hn-lotCalculator');
     let isDragging = false;
     let offsetX, offsetY;
 
