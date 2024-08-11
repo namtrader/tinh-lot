@@ -4,7 +4,10 @@
     // Tạo và thêm HTML vào TradingView
     const containerHTML = `
         <div id="lotCalculator" class="lot-calculator">
-            <h1>Công Cụ Tính Lot</h1>
+            <h1 style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Công Cụ Tính Lot</span>
+                <span id="closeButton" style="cursor: pointer; color: red; padding: 5px 10px;" title="Đóng">X</span>
+            </h1>
             <form id="lotForm">
                 <div class="form-group">
                     <div class="form-label">
@@ -329,11 +332,11 @@
     function getCurrencyUnit() {
         // Tìm tất cả các thẻ có thể chứa cặp tiền tệ
         const unitElement = document.querySelector('#header-toolbar-symbol-search > div[class*="text-"]');
-        
+
         if (!unitElement) {
             return '';
         }
-        
+
         const textContent = unitElement.textContent.trim();
 
         // Kiểm tra các cặp tiền tệ cụ thể
@@ -366,7 +369,7 @@
     function updateCurrencyPair() {
         const unit = getCurrencyUnit();
         const currencySelect = document.getElementById('currencyPair');
-        
+
         if (currencySelect) {
             const options = currencySelect.querySelectorAll('option');
             options.forEach(option => {
@@ -384,12 +387,12 @@
     function addCopyAllButton() {
         // Tìm phần tử đích
         const targetDiv = document.querySelector('div[data-name="source-properties-editor"] > div[class^="footer-"] > div[class^="buttons-"]');
-        
+
         // Tìm các trường nhập liệu
         const entryPriceInput = document.querySelector('input[data-property-id="Risk/RewardlongEntryPrice"], input[data-property-id="Risk/RewardshortEntryPrice"]');
         const profitPriceInput = document.querySelector('input[data-property-id="Risk/RewardlongProfitLevelPrice"], input[data-property-id="Risk/RewardshortProfitLevelPrice"]');
         const stopLevelInput = document.querySelector('input[data-property-id="Risk/RewardlongStopLevelPrice"], input[data-property-id="Risk/RewardshortStopLevelPrice"]');
-        
+
         // Kiểm tra điều kiện: phần tử đích tồn tại, không có nút copy-all-btn và có ít nhất một entryPriceInput
         if (targetDiv && !targetDiv.querySelector('.copy-all-btn') && entryPriceInput) {
             // Tạo nút copy-all-btn
@@ -409,7 +412,11 @@
                     // Cập nhật cặp tiền tệ và thông báo
                     updateCurrencyPair();
                     document.getElementById('alert').innerHTML = ''; // Xoá kết quả sao chép giá
-
+                    // Hiện bảng tính
+                    const lotCalculator = document.getElementById('lotCalculator');
+                    if (lotCalculator.style.display === 'none') {
+                      lotCalculator.style.display = 'block'; // Hiển thị lại
+                    }
                     // alert('Values copied to popup, currency pair updated, and calculation updated!');
                 } else {
                     alert('Không tìm thấy trường dữ liệu!');
@@ -448,6 +455,15 @@
     document.getElementById('copyStopLossPrice').addEventListener('click', () => {
         const stopLossPrice = document.getElementById('stopLossPrice').value;
         copyToClipboard(stopLossPrice);
+    });
+    // Ẩn hiện bảng tính
+    document.getElementById('closeButton').addEventListener('click', function() {
+      const lotCalculator = document.getElementById('lotCalculator');
+      if (lotCalculator.style.display === 'none') {
+          lotCalculator.style.display = 'block'; // Hiển thị lại
+      } else {
+          lotCalculator.style.display = 'none'; // Ẩn
+      }
     });
 
     function savePosition() {
