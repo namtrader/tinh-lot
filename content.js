@@ -15,7 +15,7 @@
                     </div>
                     <div class="hn-form-input">
                         <select id="hn-currencyPair">
-                            <option value="USD">xxxUSD,US30</option>
+                            <option value="USD">xxxUSD</option>
                             <option value="XAU">XAUUSD</option>
                             <option value="BTC">BTCUSD</option>
                             <option value="XTI">XTIUSD</option>
@@ -258,7 +258,7 @@
         }
     }
 
-    function displayResult(title, pipRisk, pipValueUSD, lotSize, maxRiskUSD) {
+    function displayResult(title, pipRisk, pipValueUSD, lotSize, maxRiskUSD, rrRatio) {
         const minLotSize = 0.01;
 
         // Tính toán kích thước lot nửa trước
@@ -271,8 +271,21 @@
             <p>Lot: <span style="color:red">${lotSize.toFixed(2)}</span> (Chia đôi: <span style="color:red">${halfLotSize.toFixed(2)}</span>)</p>
             <p>Số USD SL: ${maxRiskUSD.toFixed(2)}</p>
             <p>Số Pip SL: ${pipRisk.toFixed(1)}</p>
+            <p title="Quản trị vốn RR 1:1">RR: ${rrRatio.toFixed(2)} (QTV: ${calculateActualRR(rrRatio).toFixed(1)})</p>
         `;
         console.log('%c' + pipValueUSD, 'color: blue;'); // Debug
+    }
+
+    function calculateActualRR(targetR) {
+        if (targetR <= 1) {
+            return targetR; // Nếu mục tiêu là 1R hoặc nhỏ hơn, giữ nguyên
+        }
+
+        const profitFirstHalf = 0.5; // Lợi nhuận từ phần lot đầu tiên (1R)
+        const profitRemaining = targetR * 0.5; // Lợi nhuận từ phần lot còn lại
+        const totalProfit = profitFirstHalf + profitRemaining; // Tổng lợi nhuận thực tế
+
+        return totalProfit;
     }
 
     function calculateLot() {
@@ -287,6 +300,7 @@
         const capital = parseFloat(document.getElementById('hn-capital').value);
         const riskPercentage = parseFloat(document.getElementById('hn-riskPercentage').value);
         const entryPrice = parseFloat(document.getElementById('hn-entryPrice').value);
+        const profitPrice = parseFloat(document.getElementById('hn-profitPrice').value);
         const stopLossPrice = parseFloat(document.getElementById('hn-stopLossPrice').value);
         const pair = document.getElementById('hn-currencyPair').value;
         const exchangeRate = exchangeRates[pair];
@@ -298,6 +312,10 @@
             riskPercentage
         }));
 
+        const rewardPips = Math.abs(profitPrice - entryPrice); // Khoảng cách từ Entry đến TP
+        const riskPips = Math.abs(entryPrice - stopLossPrice); // Khoảng cách từ Entry đến SL
+        const rrRatio = rewardPips / riskPips; // Tỷ lệ R:R
+
         const maxRiskUSD = (capital * riskPercentage) / 100;
         const pipSize = (pair === 'JPY') ? 0.01 : 0.0001;
         const isGoldOil = ['XAU', 'XTI'].includes(pair);
@@ -306,24 +324,24 @@
         let pipRisk, pipValueUSD, lotSize;
 
         if (isGoldOil) {
-            pipRisk = Math.abs(entryPrice - stopLossPrice) / 0.01;
+            pipRisk = riskPips / 0.01;
             pipValueUSD = 1;
             lotSize = maxRiskUSD / (pipRisk * pipValueUSD);
-            displayResult(pair === 'XAU' ? `Vàng ${pair}` : `Dầu ${pair}`, pipRisk, pipValueUSD, lotSize, maxRiskUSD);
+            displayResult(pair === 'XAU' ? `Vàng ${pair}` : `Dầu ${pair}`, pipRisk, pipValueUSD, lotSize, maxRiskUSD, rrRatio);
         } else if (isBTC) {
-            pipRisk = Math.abs(entryPrice - stopLossPrice);
+            pipRisk = riskPips;
             lotSize = maxRiskUSD / pipRisk;
-            displayResult('Bitcoin', pipRisk, 0, lotSize, maxRiskUSD);
+            displayResult('Bitcoin', pipRisk, 0, lotSize, maxRiskUSD, rrRatio);
         } else {
             if (!exchangeRate) {
                 document.getElementById('hn-result').innerHTML = '<p>Tỷ giá không hợp lệ. Vui lòng kiểm tra lại.</p>';
                 return;
             }
 
-            pipRisk = Math.abs(entryPrice - stopLossPrice) / pipSize;
+            pipRisk = riskPips / pipSize;
             pipValueUSD = pipSize * 100000 / exchangeRate;
             lotSize = maxRiskUSD / (pipRisk * pipValueUSD);
-            displayResult(`Cặp Tiền ${pair}`, pipRisk, pipValueUSD, lotSize, maxRiskUSD);
+            displayResult(`Cặp Tiền ${pair}`, pipRisk, pipValueUSD, lotSize, maxRiskUSD, rrRatio);
         }
     }
 
@@ -338,30 +356,36 @@
         const textContent = unitElement.textContent.trim();
 
         // Kiểm tra các cặp tiền tệ cụ thể
+        let currencyUnit = '';
+
         if (textContent === 'XAUUSD') {
-            return 'XAU';
+            currencyUnit = 'XAU';
         } else if (textContent === 'BTCUSD' || textContent === 'BTCUSDT') {
-            return 'BTC';
+            currencyUnit = 'BTC';
         } else if (textContent === 'XTIUSD') {
-            return 'XTI';
+            currencyUnit = 'XTI';
         } else if (textContent.endsWith('USD')) {
-            return 'USD';
+            currencyUnit = 'USD';
         } else if (textContent.endsWith('JPY')) {
-            return 'JPY';
+            currencyUnit = 'JPY';
         } else if (textContent.endsWith('CAD')) {
-            return 'CAD';
+            currencyUnit = 'CAD';
         } else if (textContent.endsWith('AUD')) {
-            return 'AUD';
+            currencyUnit = 'AUD';
         } else if (textContent.endsWith('GBP')) {
-            return 'GBP';
+            currencyUnit = 'GBP';
         } else if (textContent.endsWith('NZD')) {
-            return 'NZD';
+            currencyUnit = 'NZD';
         } else if (textContent.endsWith('CHF')) {
-            return 'CHF';
-        } else {
-            // Nếu không khớp với bất kỳ trường hợp nào, trả về một giá trị mặc định
-            return '';
+            currencyUnit = 'CHF';
         }
+
+        // Nếu không khớp với bất kỳ trường hợp nào, hiển thị thông báo và trả về giá trị mặc định
+        if (!currencyUnit) {
+            alert('Cặp tiền này không được hỗ trợ.');
+        }
+
+        return currencyUnit;
     }
 
     function updateCurrencyPair() {
@@ -431,6 +455,12 @@
     observer.observe(document.body, { childList: true, subtree: true });
 
     function copyToClipboard(value) {
+        // Kiểm tra nếu value không rỗng
+        if (value.trim() === '') {
+            document.getElementById('hn-alert').innerHTML = '<p>Không có gì để sao chép.</p>';
+            return;
+        }
+
         navigator.clipboard.writeText(value).then(() => {
             document.getElementById('hn-alert').innerHTML = `<p>Đã sao chép: ${value}</p>`;
         }).catch(err => {
