@@ -266,12 +266,18 @@
         // Đảm bảo lotSize không nhỏ hơn minLotSize
         lotSize = Math.max(lotSize, minLotSize);
 
+        // Tạo chuỗi hiển thị cho QTV nếu rrRatio > 1
+        const qtvDisplay = rrRatio > 1.19 ? `<span title="Cắt nửa lot khi 1:1">(QTV: ${calculateActualRR(rrRatio).toFixed(1)})</span>` : '';
+
+        // Tạo chuỗi hiển thị cho phần chia đôi lot nếu lotSize > 0.01
+        const halfLotSizeDisplay = lotSize > 0.015 ? `(Chia đôi: <span style="color:red">${halfLotSize.toFixed(2)})` : '';
+
         document.getElementById('hn-result').innerHTML = `
             <h2>${title}</h2>
-            <p>Lot: <span style="color:red">${lotSize.toFixed(2)}</span> (Chia đôi: <span style="color:red">${halfLotSize.toFixed(2)}</span>)</p>
+            <p>Lot: <span style="color:red">${lotSize.toFixed(2)}</span> ${halfLotSizeDisplay}</p>
             <p>Số USD SL: ${maxRiskUSD.toFixed(2)}</p>
             <p>Số Pip SL: ${pipRisk.toFixed(1)}</p>
-            <p title="Quản trị vốn RR 1:1">RR: ${rrRatio.toFixed(2)} (QTV: ${calculateActualRR(rrRatio).toFixed(1)})</p>
+            <p>RR: ${rrRatio.toFixed(2)} ${qtvDisplay}</p>
         `;
         console.log('%c' + pipValueUSD, 'color: blue;'); // Debug
     }
