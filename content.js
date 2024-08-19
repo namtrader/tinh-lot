@@ -267,7 +267,7 @@
         lotSize = Math.max(lotSize, minLotSize);
 
         // Tạo chuỗi hiển thị cho QTV nếu rrRatio > 1
-        const qtvDisplay = rrRatio > 1.19 ? `<span title="Cắt nửa lot khi 1:1">(QTV: ${calculateActualRR(rrRatio).toFixed(1)})</span>` : '';
+        const qtvDisplay = rrRatio > 1 ? `<span title="Cắt nửa lot khi 1:1">(QTV: ${calculateActualRR(rrRatio).toFixed(1)})</span>` : '';
 
         // Tạo chuỗi hiển thị cho phần chia đôi lot nếu lotSize > 0.01
         const halfLotSizeDisplay = lotSize > 0.015 ? `(Chia đôi: <span style="color:red">${halfLotSize.toFixed(2)})` : '';
