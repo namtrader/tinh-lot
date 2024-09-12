@@ -74,20 +74,6 @@
                         <input type="number" id="hn-stopLossPrice" step="0.0001" required>
                     </div>
                 </div>
-                <div class="hn-exchange-rate-container">
-                    <span id="hn-exchangeRate">0.00</span>
-                    <button type="button" id="hn-reloadExchangeRate" title="Tải lại tỷ giá với USD">
-                        <!-- SVG Refresh Icon -->
-                        <svg fill="#FFFFFF" height="24px" width="24px" version="1.1" id="hn-Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 489.698 489.698" xml:space="preserve">
-                            <g>
-                                <g>
-                                    <path d="M468.999,227.774c-11.4,0-20.8,8.3-20.8,19.8c-1,74.9-44.2,142.6-110.3,178.9c-99.6,54.7-216,5.6-260.6-61l62.9,13.1c10.4,2.1,21.8-4.2,23.9-15.6c2.1-10.4-4.2-21.8-15.6-23.9l-123.7-26c-7.2-1.7-26.1,3.5-23.9,22.9l15.6,124.8c1,10.4,9.4,17.7,19.8,17.7c15.5,0,21.8-11.4,20.8-22.9l-7.3-60.9c101.1,121.3,229.4,104.4,306.8,69.3c80.1-42.7,131.1-124.8,132.1-215.4C488.799,237.174,480.399,227.774,468.999,227.774z"/>
-                                    <path d="M20.599,261.874c11.4,0,20.8-8.3,20.8-19.8c1-74.9,44.2-142.6,110.3-178.9c99.6-54.7,216-5.6,260.6,61l-62.9-13.1c-10.4-2.1-21.8,4.2-23.9,15.6c-2.1,10.4,4.2,21.8,15.6,23.9l123.8,26c7.2,1.7,26.1-3.5,23.9-22.9l-15.6-124.8c-1-10.4-9.4-17.7-19.8-17.7c-15.5,0-21.8,11.4-20.8,22.9l7.2,60.9c-101.1-121.2-229.4-104.4-306.8-69.2c-80.1,42.6-131.1,124.8-132.2,215.3C0.799,252.574,9.199,261.874,20.599,261.874z"/>
-                                </g>
-                            </g>
-                        </svg>
-                    </button>
-                </div>
             </form>
             <div class="hn-alert" id="hn-alert"></div>
             <div class="hn-result" id="hn-result"></div>
@@ -161,7 +147,7 @@
         .hn-alert p {
             color: #6495ed;
         }
-        #hn-copyEntryPrice, #hn-copyProfitPrice, #hn-copyStopLossPrice, #hn-reloadExchangeRate {
+        #hn-copyEntryPrice, #hn-copyProfitPrice, #hn-copyStopLossPrice {
             margin-top: 5px;
             padding: 5px 10px;
             background-color: #007bff;
@@ -170,7 +156,7 @@
             border-radius: 3px;
             cursor: pointer;
         }
-        #hn-copyEntryPrice:hover, #hn-copyProfitPrice:hover, #hn-copyStopLossPrice:hover, #hn-reloadExchangeRate:hover, .hn-copy-all-btn:hover {
+        #hn-copyEntryPrice:hover, #hn-copyProfitPrice:hover, #hn-copyStopLossPrice:hover, .hn-copy-all-btn:hover {
             background-color: #0056b3;
         }
         .hn-copy-all-btn {
@@ -180,85 +166,29 @@
             background-color: #007bff;
             color: white;
         }
-        .hn-exchange-rate-container {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            font-size: 13px;
-        }
-
-        #hn-exchangeRate {
-            margin-right: 5px;
-            font-size: 13px;
-        }
-
-        #hn-reloadExchangeRate {
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        #hn-reloadExchangeRate svg {
-            fill: #ffffff;
-            height: 13px;
-            width: 13px;
-        }
-
-        #hn-reloadExchangeRate:hover svg {
-            fill: #cccccc;
-        }
     `;
     document.head.appendChild(style);
 
-    const API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
-    const CACHE_KEY = 'tradingData';
-    const DATE_KEY = 'lastUpdateDate';
-    const STORAGE_KEY = 'lotCalculatorPosition';
+    // Tỷ giá cặp tiền với USD 11/09/2024
+    const exchangeRates = {
+        USD: 1.00,
+        JPY: 141.66,
+        CAD: 1.36,
+        AUD: 1.50,
+        GBP: 0.77,
+        NZD: 1.63,
+        CHF: 0.85
+    };
 
-    async function fetchExchangeRate() {
-        try {
-            const response = await fetch(API_URL);
-            const data = await response.json();
-            localStorage.setItem(CACHE_KEY, JSON.stringify({
-                ...getLocalData(),
-                exchangeRates: data.rates
-            }));
-            const currentDate = new Date().toISOString().split('T')[0];
-            localStorage.setItem(DATE_KEY, currentDate);
-
-            return data.rates;
-        } catch (error) {
-            console.error('Lỗi khi lấy tỷ giá:', error);
-            return null;
-        }
-    }
+    const LOT_DATA_KEY = 'lotCalculatorData';
+    const LOT_POSITION_KEY = 'lotCalculatorPosition';
 
     function getLocalData() {
-        const storedData = localStorage.getItem(CACHE_KEY);
+        const storedData = localStorage.getItem(LOT_DATA_KEY);
         return storedData ? JSON.parse(storedData) : {};
     }
 
-    function updateExchangeRateField(rates) {
-        const pair = document.getElementById('hn-currencyPair').value;
-        const exchangeRate = rates[pair];
-        document.getElementById('hn-exchangeRate').textContent = exchangeRate ? exchangeRate.toFixed(2) : '';
-    }
-
-    async function reloadExchangeRate() {
-        const exchangeRates = await fetchExchangeRate();
-        if (exchangeRates) {
-            updateExchangeRateField(exchangeRates);
-        }
-    }
-
-    function updateExchangeRate() {
-        const data = getLocalData();
-        if (data.exchangeRates) {
-            updateExchangeRateField(data.exchangeRates);
-        }
-    }
-
-    function displayResult(title, pipRisk, pipValueUSD, lotSize, maxRiskUSD, rrRatio) {
+    function displayResult(title, pipRisk, lotSize, maxRiskUSD, rrRatio) {
         const minLotSize = 0.01;
 
         // Tính toán kích thước lot nửa trước
@@ -275,11 +205,10 @@
         document.getElementById('hn-result').innerHTML = `
             <h2>${title}</h2>
             <p>Lot: <span style="color:red">${lotSize.toFixed(2)}</span> ${halfLotSizeDisplay}</p>
-            <p>Số USD SL: ${maxRiskUSD.toFixed(2)}</p>
+            <p>Số USD SL: ${maxRiskUSD}</p>
             <p>Số Pip SL: ${pipRisk.toFixed(1)}</p>
             <p>RR: ${rrRatio.toFixed(2)} ${qtvDisplay}</p>
         `;
-        console.log('%c' + pipValueUSD, 'color: blue;'); // Debug
     }
 
     function calculateActualRR(targetR) {
@@ -295,14 +224,6 @@
     }
 
     function calculateLot() {
-        const data = getLocalData();
-        const exchangeRates = data.exchangeRates;
-
-        if (!exchangeRates) {
-            document.getElementById('hn-result').innerHTML = '<p>Lỗi khi lấy tỷ giá. Vui lòng thử lại sau.</p>';
-            return;
-        }
-
         const capital = parseFloat(document.getElementById('hn-capital').value);
         const riskPercentage = parseFloat(document.getElementById('hn-riskPercentage').value);
         const entryPrice = parseFloat(document.getElementById('hn-entryPrice').value);
@@ -311,18 +232,23 @@
         const pair = document.getElementById('hn-currencyPair').value;
         const exchangeRate = exchangeRates[pair];
 
-        localStorage.setItem(CACHE_KEY, JSON.stringify({
-            ...data,
+        localStorage.setItem(LOT_DATA_KEY, JSON.stringify({
             currencyPair: pair,
             capital,
             riskPercentage
         }));
 
+        // Kiểm tra xem tất cả các giá trị có hợp lệ không
+        if (isNaN(capital) || isNaN(riskPercentage) || isNaN(entryPrice) || isNaN(profitPrice) || isNaN(stopLossPrice) || !pair) {
+            document.getElementById('hn-result').innerHTML = '<p>Vui lòng điền đầy đủ thông tin.</p>';
+            return;
+        }
+
         const rewardPips = Math.abs(profitPrice - entryPrice); // Khoảng cách từ Entry đến TP
         const riskPips = Math.abs(entryPrice - stopLossPrice); // Khoảng cách từ Entry đến SL
         const rrRatio = rewardPips / riskPips; // Tỷ lệ R:R
 
-        const maxRiskUSD = (capital * riskPercentage) / 100;
+        const maxRiskUSD = Math.round(capital * (riskPercentage / 100));
         const pipSize = (pair === 'JPY') ? 0.01 : 0.0001;
         const isGoldOil = ['XAU', 'XTI'].includes(pair);
         const isBTC = pair === 'BTC';
@@ -331,13 +257,12 @@
 
         if (isGoldOil) {
             pipRisk = riskPips / 0.01;
-            pipValueUSD = 1;
-            lotSize = maxRiskUSD / (pipRisk * pipValueUSD);
-            displayResult(pair === 'XAU' ? `Vàng ${pair}` : `Dầu ${pair}`, pipRisk, pipValueUSD, lotSize, maxRiskUSD, rrRatio);
+            lotSize = maxRiskUSD / pipRisk;
+            displayResult(pair === 'XAU' ? `Vàng ${pair}` : `Dầu ${pair}`, pipRisk, lotSize, maxRiskUSD, rrRatio);
         } else if (isBTC) {
             pipRisk = riskPips;
             lotSize = maxRiskUSD / pipRisk;
-            displayResult('Bitcoin', pipRisk, 0, lotSize, maxRiskUSD, rrRatio);
+            displayResult('Bitcoin', pipRisk, lotSize, maxRiskUSD, rrRatio);
         } else {
             if (!exchangeRate) {
                 document.getElementById('hn-result').innerHTML = '<p>Tỷ giá không hợp lệ. Vui lòng kiểm tra lại.</p>';
@@ -347,7 +272,7 @@
             pipRisk = riskPips / pipSize;
             pipValueUSD = pipSize * 100000 / exchangeRate;
             lotSize = maxRiskUSD / (pipRisk * pipValueUSD);
-            displayResult(`Cặp Tiền ${pair}`, pipRisk, pipValueUSD, lotSize, maxRiskUSD, rrRatio);
+            displayResult(`Cặp Tiền ${pair}`, pipRisk, lotSize, maxRiskUSD, rrRatio);
         }
     }
 
@@ -406,8 +331,6 @@
                 }
             });
 
-            // Cập nhật tỷ giá và tính toán lại ngay lập tức
-            updateExchangeRate();
             calculateLot();
         }
     }
@@ -475,9 +398,7 @@
     }
 
     // Gán sự kiện
-    document.getElementById('hn-reloadExchangeRate').addEventListener('click', reloadExchangeRate);
     document.getElementById('hn-lotForm').addEventListener('input', calculateLot);
-    document.getElementById('hn-currencyPair').addEventListener('change', updateExchangeRate);
     document.getElementById('hn-copyEntryPrice').addEventListener('click', () => {
         const entryPrice = document.getElementById('hn-entryPrice').value;
         copyToClipboard(entryPrice);
@@ -507,12 +428,12 @@
                 left: calculator.style.left,
                 top: calculator.style.top
             };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(position));
+            localStorage.setItem(LOT_POSITION_KEY, JSON.stringify(position));
         }
     }
 
     function loadPosition() {
-        const savedPosition = localStorage.getItem(STORAGE_KEY);
+        const savedPosition = localStorage.getItem(LOT_POSITION_KEY);
         if (savedPosition) {
             const position = JSON.parse(savedPosition);
             const calculator = document.getElementById('hn-lotCalculator');
@@ -521,34 +442,6 @@
                 calculator.style.top = position.top || '0px';
             }
         }
-    }
-
-    async function initialize() {
-        const data = getLocalData();
-
-        const lastUpdateDate = localStorage.getItem(DATE_KEY);
-        const currentDate = new Date().toISOString().split('T')[0];
-
-        if (lastUpdateDate !== currentDate || !data.exchangeRates) {
-            // Nếu ngày lưu trữ khác ngày hiện tại hoặc không có dữ liệu tỷ giá, tải tỷ giá và cập nhật
-            const exchangeRates = await fetchExchangeRate();
-            if (exchangeRates) {
-                updateExchangeRateField(exchangeRates);
-            }
-        } else {
-            // Nếu tỷ giá đã được cập nhật trong ngày hiện tại, lấy từ localStorage
-            updateExchangeRateField(data.exchangeRates);
-        }
-
-        if (data) {
-            document.getElementById('hn-currencyPair').value = data.currencyPair || 'USD';
-            document.getElementById('hn-capital').value = data.capital || '';
-            document.getElementById('hn-riskPercentage').value = data.riskPercentage || '';
-            document.getElementById('hn-exchangeRate').textContent = data.exchangeRates ? data.exchangeRates[data.currencyPair] || '' : '';
-        }
-
-        loadPosition(); // Khôi phục vị trí khi khởi tạo
-        updateExchangeRate();
     }
 
     // Gán sự kiện lưu vị trí khi người dùng thả chuột
@@ -580,6 +473,18 @@
         draggable.style.cursor = 'move';
         savePosition(); // Lưu vị trí khi thả chuột
     });
+
+    async function initialize() {
+        const data = getLocalData();
+
+        if (data) {
+            document.getElementById('hn-currencyPair').value = data.currencyPair || 'USD';
+            document.getElementById('hn-capital').value = data.capital || '';
+            document.getElementById('hn-riskPercentage').value = data.riskPercentage || '';
+        }
+
+        loadPosition(); // Khôi phục vị trí khi khởi tạo
+    }
 
     initialize();
 
